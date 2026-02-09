@@ -1,0 +1,9 @@
+.kpi-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.kpi-body {
+    margin-top: auto;
+}

@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: fraud_detection_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - fraud_network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ml_service:
+    build:
+      context: ./ml_service
+      dockerfile: Dockerfile
+    container_name: fraud_detection_ml
+    ports:
+      - "8001:8001"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    networks:
+      - fraud_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  backend:
+    build:
+      context: ./backend_server
+      dockerfile: Dockerfile
+    container_name: fraud_detection_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/fraud_detection
+      - ML_SERVICE_URL=http://ml_service:8001
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      ml_service:
+        condition: service_healthy
+    networks:
+      - fraud_network
+
+  frontend:
+    build:
+      context: ./frontend_dashboard
+      dockerfile: Dockerfile
+    container_name: fraud_detection_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - fraud_network
+
+networks:
+  fraud_network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

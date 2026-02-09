@@ -1,0 +1,63 @@
+{
+    "name": "AI-Powered Social Media Fraud Detection Platform",
+    "version": "1.0.0",
+    "description": "Production-grade modular platform for detecting fake social media accounts using ML",
+    "components": {
+        "ml_service": {
+            "port": 8001,
+            "host": "0.0.0.0",
+            "models": {
+                "random_forest_weight": 0.6,
+                "isolation_forest_weight": 0.4
+            }
+        },
+        "backend_server": {
+            "port": 5000,
+            "host": "0.0.0.0"
+        },
+        "frontend_dashboard": {
+            "port": 3000
+        },
+        "mongodb": {
+            "port": 27017,
+            "database": "fraud_detection"
+        }
+    },
+    "thresholds": {
+        "fake_probability_high": 0.7,
+        "fake_probability_medium": 0.4,
+        "trust_score_low": 0.3,
+        "trust_score_high": 0.7
+    },
+    "features": {
+        "behavioral": [
+            "actions_per_minute",
+            "inter_action_time_mean",
+            "inter_action_time_std",
+            "circadian_activity_distribution",
+            "message_similarity_index",
+            "follow_velocity",
+            "unfollow_velocity",
+            "session_duration_mean",
+            "session_duration_std",
+            "click_sequence_entropy",
+            "url_post_ratio",
+            "device_change_frequency"
+        ],
+        "profile": [
+            "account_age_days",
+            "follower_following_ratio",
+            "username_entropy_score",
+            "profile_completeness_index",
+            "profile_image_presence_flag",
+            "bio_length_score"
+        ],
+        "network": [
+            "mutual_connection_ratio",
+            "clustering_coefficient",
+            "pagerank_score",
+            "community_suspicion_index",
+            "edge_creation_velocity"
+        ]
+    }
+}

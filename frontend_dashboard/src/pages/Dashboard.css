@@ -1,0 +1,50 @@
+.dashboard {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.header-actions .btn-secondary {
+    position: relative;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--color-danger);
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 600;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.span-2 {
+    grid-column: span 2;
+}
+
+.sidebar-panels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+@media (max-width: 1200px) {
+    .span-2 {
+        grid-column: span 1;
+    }
+
+    .grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+}

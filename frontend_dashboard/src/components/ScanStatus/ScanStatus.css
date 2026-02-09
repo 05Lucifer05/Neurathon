@@ -1,0 +1,3 @@
+.status-dot.error {
+    background: var(--color-danger);
+}

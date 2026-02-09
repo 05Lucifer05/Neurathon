@@ -1,0 +1,120 @@
+{
+    "accounts": [
+        {
+            "account_id": "bot_test_01",
+            "username": "promo_bot_99",
+            "behavioral": {
+                "actions_per_minute": 85.5,
+                "inter_action_time_mean": 1.2,
+                "inter_action_time_std": 0.5,
+                "circadian_activity_distribution": [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "message_similarity_index": 0.95,
+                "follow_velocity": 200.0,
+                "unfollow_velocity": 150.0,
+                "session_duration_mean": 5.0,
+                "session_duration_std": 1.0,
+                "click_sequence_entropy": 0.5,
+                "url_post_ratio": 0.9,
+                "device_change_frequency": 0.0
+            },
+            "profile": {
+                "account_age_days": 5,
+                "follower_following_ratio": 0.01,
+                "username_entropy_score": 4.5,
+                "profile_completeness_index": 0.2,
+                "profile_image_presence": false,
+                "bio_length_score": 0.0
+            },
+            "network": {
+                "mutual_connection_ratio": 0.0,
+                "clustering_coefficient": 0.0,
+                "pagerank_score": 0.0,
+                "community_suspicion_index": 0.9,
+                "edge_creation_velocity": 50.0
+            }
+        },
+        {
+            "account_id": "real_user_01",
+            "username": "john_doe_creative",
+            "behavioral": {
+                "actions_per_minute": 4.2,
+                "inter_action_time_mean": 450.0,
+                "inter_action_time_std": 200.0,
+                "circadian_activity_distribution": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0.1,
+                    0.2,
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "message_similarity_index": 0.2,
+                "follow_velocity": 0.5,
+                "unfollow_velocity": 0.1,
+                "session_duration_mean": 15.0,
+                "session_duration_std": 5.0,
+                "click_sequence_entropy": 3.5,
+                "url_post_ratio": 0.1,
+                "device_change_frequency": 0.2
+            },
+            "profile": {
+                "account_age_days": 1200,
+                "follower_following_ratio": 1.5,
+                "username_entropy_score": 2.1,
+                "profile_completeness_index": 0.95,
+                "profile_image_presence": true,
+                "bio_length_score": 0.8
+            },
+            "network": {
+                "mutual_connection_ratio": 0.6,
+                "clustering_coefficient": 0.4,
+                "pagerank_score": 0.05,
+                "community_suspicion_index": 0.0,
+                "edge_creation_velocity": 0.2
+            }
+        }
+    ]
+}
