@@ -92,6 +92,9 @@ class FraudDetector:
         """
         logger.info(f"Processing batch of {len(accounts)} accounts")
         
+        # DETERMINISM: Sort accounts by account_id for consistent feature matrix ordering
+        accounts = sorted(accounts, key=lambda a: a.account_id)
+        
         # Extract and engineer features
         features, feature_snapshots = self.feature_engineer.extract_features(accounts)
         feature_names = self.feature_engineer.get_feature_names()
@@ -169,8 +172,8 @@ class FraudDetector:
         
         scores = np.dot(behavioral_subset, weights)
         
-        # Normalize to 0-1
-        scores = (scores - scores.min()) / (scores.max() - scores.min() + 1e-8)
+        # Use fixed sigmoid normalization for deterministic results
+        scores = 1 / (1 + np.exp(-scores))
         
         return scores
     
@@ -200,7 +203,8 @@ class FraudDetector:
         weights = np.array([-0.2, -0.2, 0.3, -0.2, 0.1])[:len(indices)]
         
         scores = np.dot(network_subset, weights)
-        scores = (scores - scores.min()) / (scores.max() - scores.min() + 1e-8)
+        # Use fixed sigmoid normalization for deterministic results
+        scores = 1 / (1 + np.exp(-scores))
         
         return scores
     
@@ -229,7 +233,8 @@ class FraudDetector:
         weights = np.array([0.35, 0.25, -0.2, 0.2])[:len(indices)]
         
         scores = np.dot(auth_subset, weights)
-        scores = (scores - scores.min()) / (scores.max() - scores.min() + 1e-8)
+        # Use fixed sigmoid normalization for deterministic results
+        scores = 1 / (1 + np.exp(-scores))
         
         return scores
     

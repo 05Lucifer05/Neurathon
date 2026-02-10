@@ -26,6 +26,17 @@ exports.createScan = async (req, res) => {
 
         const { accounts, name } = req.body;
 
+        // Log the received accounts for debugging
+        logger.info(`Received ${accounts ? accounts.length : 'undefined'} accounts from request`);
+        if (!accounts || !Array.isArray(accounts) || accounts.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'No accounts provided or invalid format. Expected { accounts: [...] }'
+            });
+        }
+
+        logger.info(`Account IDs: ${accounts.slice(0, 5).map(a => a.account_id).join(', ')}${accounts.length > 5 ? '...' : ''}`);
+
         // Create scan record
         const scan = await Scan.create({
             userId: req.user._id,
@@ -46,12 +57,24 @@ exports.createScan = async (req, res) => {
         logger.info(`Scan ${scan._id} started with ${accounts.length} accounts`);
 
         try {
+            // DETERMINISM: Sort accounts by account_id before processing
+            const sortedAccounts = [...accounts].sort((a, b) =>
+                (a.account_id || '').localeCompare(b.account_id || '')
+            );
+
             // Call ML service
-            const mlResults = await mlService.detectBatch(accounts);
+            const mlResults = await mlService.detectBatch(sortedAccounts);
+
+            // DETERMINISM: Sort results by account_id for consistent output
+            mlResults.results.sort((a, b) =>
+                (a.account_id || '').localeCompare(b.account_id || '')
+            );
 
             // Store results
             const accountResults = await Promise.all(
-                mlResults.results.map(async (result, index) => {
+                mlResults.results.map(async (result) => {
+                    // Match input data by account_id instead of positional index
+                    const inputData = sortedAccounts.find(a => a.account_id === result.account_id) || {};
                     return AccountResult.create({
                         scanId: scan._id,
                         accountId: result.account_id,
@@ -65,7 +88,7 @@ exports.createScan = async (req, res) => {
                         classification: result.classification,
                         behavioralIndicators: result.behavioral_indicators,
                         featureSnapshot: result.feature_snapshot,
-                        inputData: accounts[index]
+                        inputData
                     });
                 })
             );

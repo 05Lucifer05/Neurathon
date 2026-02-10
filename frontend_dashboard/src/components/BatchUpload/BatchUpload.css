@@ -157,3 +157,94 @@
     color: var(--text-secondary);
     overflow-x: auto;
 }
+
+/* Multi-file preview styles */
+.files-preview {
+    width: 100%;
+    text-align: left;
+}
+
+.files-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.files-header span {
+    flex: 1;
+}
+
+.clear-all {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+    border: none;
+    padding: 4px 8px;
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.clear-all:hover {
+    background: var(--color-danger);
+    color: white;
+}
+
+.files-list {
+    max-height: 150px;
+    overflow-y: auto;
+    margin-bottom: var(--spacing-sm);
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast);
+}
+
+.file-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.file-item .file-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.8125rem;
+}
+
+.file-item .file-size {
+    flex-shrink: 0;
+}
+
+.file-item .file-remove {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.add-more {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.upload-zone.has-file {
+    cursor: pointer;
+    padding: var(--spacing-lg);
+}
+
+.upload-zone.has-file:hover {
+    border-color: var(--accent-primary);
+}

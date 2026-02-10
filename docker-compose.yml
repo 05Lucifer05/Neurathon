@@ -23,13 +23,18 @@ services:
     container_name: fraud_detection_ml
     ports:
       - "8001:8001"
+    volumes:
+      - ./ml_service/models:/app/models
+      - ./ml_service/data:/app/data
     environment:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
+      - MODEL_PATH=/app/models
+      - API_PREFIX=/api/v1
     networks:
       - fraud_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8001/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -45,6 +50,9 @@ services:
       - NODE_ENV=production
       - MONGODB_URI=mongodb://mongodb:27017/fraud_detection
       - ML_SERVICE_URL=http://ml_service:8001
+      - ML_FALLBACK_ENABLED=true
+      - ML_BATCH_SIZE=500
+      - RESCORE_INTERVAL_HOURS=6
       - JWT_SECRET=your-super-secret-jwt-key-change-in-production
     depends_on:
       mongodb:

@@ -59,4 +59,14 @@ export const dashboardAPI = {
     getMLStatus: () => api.get('/dashboard/ml-status')
 }
 
+// Training API
+export const trainingAPI = {
+    trainWithFile: (formData) => api.post('/training/upload', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    }),
+    getStatus: (jobId) => api.get(`/training/status/${jobId}`)
+}
+
 export default api

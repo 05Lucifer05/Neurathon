@@ -1,0 +1,126 @@
+.trust-score-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.chart-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-display {
+    position: absolute;
+    font-weight: 700;
+    text-align: center;
+    transform: translateY(-10px);
+}
+
+.chart-label {
+    font-size: 0.875rem;
+    color: #A0AEC0;
+    margin-top: -20px;
+    text-align: center;
+}
+
+.classification-badge {
+    margin-top: 8px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid;
+}
+
+/* Gauge variant styles */
+.trust-gauge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+}
+
+.gauge-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.gauge-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.gauge-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: baseline;
+}
+
+.gauge-score {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #E2E8F0;
+}
+
+.gauge-percent {
+    font-size: 1rem;
+    color: #A0AEC0;
+    margin-left: 2px;
+}
+
+.gauge-label {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #A0AEC0;
+    text-align: center;
+}
+
+.gauge-description {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: #718096;
+    text-align: center;
+}
+
+/* Trend indicator styles */
+.trust-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.trust-trend.up {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+}
+
+.trust-trend.down {
+    background: rgba(239, 68, 68, 0.15);
+    color: #EF4444;
+}
+
+.trust-trend.stable {
+    background: rgba(160, 174, 192, 0.15);
+    color: #A0AEC0;
+}
+
+.trend-icon {
+    font-size: 0.875rem;
+}
+
+.trend-value {
+    font-variant-numeric: tabular-nums;
+}

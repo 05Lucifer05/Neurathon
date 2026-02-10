@@ -14,6 +14,8 @@ import Alerts from './pages/Alerts'
 import Network from './pages/Network'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
+import Training from './pages/Training'
+import ModerationQueue from './pages/ModerationQueue'
 
 function AppLayout() {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -48,6 +50,8 @@ function AppLayout() {
                     <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
                     <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
                     <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                    <Route path="/training" element={<ProtectedRoute><Training /></ProtectedRoute>} />
+                    <Route path="/moderation" element={<ProtectedRoute><ModerationQueue /></ProtectedRoute>} />
                 </Routes>
             </main>
         </div>

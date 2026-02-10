@@ -8,6 +8,8 @@ import logging
 
 from app.config import settings
 from app.api.routes import router
+from app.api.predict import router as predict_router
+from app.api.train import router as train_router
 from app.utils.logging import setup_logging
 from app.models.ml_models import ModelManager
 
@@ -40,7 +42,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Fraud Detection ML Service",
     description="AI-powered social media fraud detection using behavioral analysis and network signals",
-    version="1.0.0",
+    version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
@@ -56,8 +58,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API routes
+# Include API routes (existing detection endpoints)
 app.include_router(router, prefix=settings.api_prefix)
+
+# Include new prediction and training routes
+app.include_router(predict_router, prefix=f"{settings.api_prefix}")
+app.include_router(train_router, prefix=f"{settings.api_prefix}")
 
 
 @app.get("/health", tags=["Health"])

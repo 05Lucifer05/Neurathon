@@ -10,7 +10,8 @@ import {
     ChevronRight,
     AlertTriangle,
     Network,
-    LogOut
+    LogOut,
+    Brain
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import './Sidebar.css'
@@ -22,6 +23,8 @@ const menuItems = [
     { id: 'alerts', path: '/alerts', icon: AlertTriangle, label: 'Alerts', badge: 3 },
     { id: 'network', path: '/network', icon: Network, label: 'Network Graph' },
     { id: 'reports', path: '/reports', icon: BarChart3, label: 'Reports' },
+    { id: 'training', path: '/training', icon: Brain, label: 'Model Training' },
+    { id: 'moderation', path: '/moderation', icon: Shield, label: 'Moderation Queue', adminOnly: true },
 ]
 
 const bottomItems = [
@@ -68,24 +71,26 @@ export default function Sidebar({ collapsed, onToggle }) {
                 <div className="nav-section">
                     {!collapsed && <span className="nav-section-title">Main Menu</span>}
                     <ul className="nav-list">
-                        {menuItems.map((item) => (
-                            <li key={item.id}>
-                                <button
-                                    className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
-                                    onClick={() => navigate(item.path)}
-                                >
-                                    <item.icon size={20} className="nav-icon" />
-                                    {!collapsed && (
-                                        <>
-                                            <span className="nav-label">{item.label}</span>
-                                            {item.badge && (
-                                                <span className="nav-badge">{item.badge}</span>
-                                            )}
-                                        </>
-                                    )}
-                                </button>
-                            </li>
-                        ))}
+                        {menuItems
+                            .filter(item => !item.adminOnly || isAdmin)
+                            .map((item) => (
+                                <li key={item.id}>
+                                    <button
+                                        className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
+                                        onClick={() => navigate(item.path)}
+                                    >
+                                        <item.icon size={20} className="nav-icon" />
+                                        {!collapsed && (
+                                            <>
+                                                <span className="nav-label">{item.label}</span>
+                                                {item.badge && (
+                                                    <span className="nav-badge">{item.badge}</span>
+                                                )}
+                                            </>
+                                        )}
+                                    </button>
+                                </li>
+                            ))}
                     </ul>
                 </div>
 

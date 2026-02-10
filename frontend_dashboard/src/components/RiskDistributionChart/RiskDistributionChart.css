@@ -1,0 +1,117 @@
+.risk-distribution-chart {
+    background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.chart-title {
+    color: #E2E8F0;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.chart-wrapper {
+    margin-bottom: 1rem;
+}
+
+.distribution-stats {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 1rem;
+    border-top: 1px solid #2D3748;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #A0AEC0;
+    margin-top: 2px;
+}
+
+.stat-item.low .stat-value {
+    color: #10B981;
+}
+
+.stat-item.medium .stat-value {
+    color: #F59E0B;
+}
+
+.stat-item.high .stat-value {
+    color: #EF4444;
+}
+
+/* Stacked bar styles */
+.risk-stacked-bar {
+    width: 100%;
+}
+
+.stacked-bar {
+    display: flex;
+    height: 24px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #2D3748;
+}
+
+.bar-segment {
+    transition: width 0.3s ease;
+    min-width: 0;
+}
+
+.bar-segment.real {
+    background: linear-gradient(90deg, #10B981, #34D399);
+}
+
+.bar-segment.suspicious {
+    background: linear-gradient(90deg, #F59E0B, #FBBF24);
+}
+
+.bar-segment.fake {
+    background: linear-gradient(90deg, #EF4444, #F87171);
+}
+
+.stacked-labels {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.label-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: #A0AEC0;
+}
+
+.label-item .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.label-item.real .dot {
+    background: #10B981;
+}
+
+.label-item.suspicious .dot {
+    background: #F59E0B;
+}
+
+.label-item.fake .dot {
+    background: #EF4444;
+}

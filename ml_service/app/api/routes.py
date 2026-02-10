@@ -50,11 +50,14 @@ async def detect_fraud(
     try:
         logger.info(f"Received detection request for {len(request.accounts)} accounts")
         
+        # DETERMINISM: Sort accounts by account_id before processing
+        sorted_accounts = sorted(request.accounts, key=lambda a: a.account_id)
+        
         # Initialize fraud detector
         detector = FraudDetector(model_manager)
         
         # Process batch
-        results, summary = detector.detect_batch(request.accounts)
+        results, summary = detector.detect_batch(sorted_accounts)
         
         processing_time = time.time() - start_time
         logger.info(f"Batch processed in {processing_time:.2f}s")

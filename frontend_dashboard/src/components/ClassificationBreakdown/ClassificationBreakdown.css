@@ -1,0 +1,130 @@
+.classification-breakdown {
+    background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.classification-breakdown.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.breakdown-title {
+    color: #E2E8F0;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.chart-container {
+    position: relative;
+}
+
+.center-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+}
+
+.total-value {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #E2E8F0;
+}
+
+.total-text {
+    display: block;
+    font-size: 0.75rem;
+    color: #A0AEC0;
+}
+
+.no-data {
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+.classification-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    transition: background 0.2s ease;
+}
+
+.legend-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.legend-name {
+    color: #E2E8F0;
+    font-size: 0.875rem;
+    flex: 1;
+}
+
+.legend-value {
+    color: #E2E8F0;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.legend-pct {
+    color: #718096;
+    font-size: 0.75rem;
+}
+
+/* Classification Badge */
+.classification-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.classification-badge.small {
+    padding: 0.125rem 0.5rem;
+    font-size: 0.625rem;
+}
+
+.classification-badge.real {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+}
+
+.classification-badge.suspicious {
+    background: rgba(245, 158, 11, 0.15);
+    color: #F59E0B;
+}
+
+.classification-badge.fake {
+    background: rgba(239, 68, 68, 0.15);
+    color: #EF4444;
+}

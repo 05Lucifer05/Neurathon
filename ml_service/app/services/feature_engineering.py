@@ -27,6 +27,7 @@ class FeatureEngineer:
     
     # Feature normalization ranges (based on typical social media patterns)
     NORMALIZATION_PARAMS = {
+        # Behavioral features (fixed min/max)
         'actions_per_minute': {'min': 0, 'max': 100},
         'inter_action_time_mean': {'min': 0, 'max': 3600},
         'inter_action_time_std': {'min': 0, 'max': 1800},
@@ -37,10 +38,37 @@ class FeatureEngineer:
         'click_sequence_entropy': {'min': 0, 'max': 10},
         'device_change_frequency': {'min': 0, 'max': 20},
         'account_age_days': {'min': 0, 'max': 3650},
-        'follower_following_ratio': {'min': 0, 'max': 100},
         'username_entropy_score': {'min': 0, 'max': 5},
         'pagerank_score': {'min': 0, 'max': 1},
-        'edge_creation_velocity': {'min': 0, 'max': 100},
+        'circadian_entropy': {'min': 0, 'max': 5},
+        'circadian_peak_hour': {'min': 0, 'max': 23},
+        'circadian_night_activity': {'min': 0, 'max': 1},
+        'circadian_burst_score': {'min': 0, 'max': 10},
+        
+        # Profile features (fixed min/max)
+        'account_maturity_score': {'min': 0, 'max': 1},
+        'profile_quality_score': {'min': 0, 'max': 1},
+        
+        # Network features (fixed min/max)
+        'network_authenticity_score': {'min': 0, 'max': 1},
+        
+        # Features already in 0-1 range (keep as-is)
+        'message_similarity_index': {'min': 0, 'max': 1},
+        'url_post_ratio': {'min': 0, 'max': 1},
+        'profile_completeness_index': {'min': 0, 'max': 1},
+        'profile_image_presence': {'min': 0, 'max': 1},
+        'bio_length_score': {'min': 0, 'max': 1},
+        'mutual_connection_ratio': {'min': 0, 'max': 1},
+        'clustering_coefficient': {'min': 0, 'max': 1},
+        'community_suspicion_index': {'min': 0, 'max': 1},
+        
+        # Ratio/growth features (log-scaling for extreme value robustness)
+        # type='ratio' uses np.log1p(value) / np.log1p(max_log), clipped to [0,1]
+        'follower_following_ratio': {'type': 'ratio', 'max_log': 100},
+        'follow_unfollow_ratio': {'type': 'ratio', 'max_log': 20},
+        'session_variance_coef': {'type': 'ratio', 'max_log': 5},
+        'edge_creation_velocity': {'type': 'ratio', 'max_log': 100},
+        'network_growth_rate': {'type': 'ratio', 'max_log': 50},
     }
     
     def __init__(self):
@@ -64,6 +92,9 @@ class FeatureEngineer:
         
         # Convert to DataFrame for vectorized operations
         df = pd.DataFrame(feature_dicts)
+        
+        # DETERMINISM: Sort columns alphabetically to ensure consistent ordering
+        df = df[sorted(df.columns)]
         
         # Store feature names
         self.feature_names = list(df.columns)
@@ -109,10 +140,11 @@ class FeatureEngineer:
             b.session_duration_mean + 0.1
         )
         
-        # Circadian activity features
+        # Circadian activity features (DETERMINISTIC)
         circadian = np.array(b.circadian_activity_distribution)
         features['circadian_entropy'] = self._calculate_entropy(circadian)
-        features['circadian_peak_hour'] = np.argmax(circadian)
+        # Use weighted average of top hours instead of argmax for stability
+        features['circadian_peak_hour'] = self._calculate_peak_hour(circadian)
         features['circadian_night_activity'] = np.sum(circadian[0:6]) + np.sum(circadian[22:24])
         features['circadian_burst_score'] = np.max(circadian) / (np.mean(circadian) + 0.001)
         
@@ -153,25 +185,74 @@ class FeatureEngineer:
         
         return features
     
+    @staticmethod
+    def _normalize_ratio(value: float, max_log: float) -> float:
+        """
+        Deterministic log-scaling normalization for ratio features.
+        Applies np.log1p to compress extreme values, then normalizes
+        against a fixed upper bound. Result is clipped to [0, 1].
+        
+        Args:
+            value: Raw ratio value (>= 0)
+            max_log: Fixed upper bound before log transform
+            
+        Returns:
+            Normalized value in [0, 1]
+        """
+        log_value = np.log1p(max(value, 0.0))
+        log_bound = np.log1p(max_log)
+        return min(log_value / log_bound, 1.0)
+    
     def _normalize_features(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Apply min-max normalization to features"""
+        """
+        Apply normalization to features using FIXED parameters only.
+        DETERMINISTIC: No batch-dependent normalization.
+        
+        Supports two normalization strategies:
+        - Fixed min/max scaling (default)
+        - Log-scaling for ratio features (type='ratio')
+        """
         df_norm = df.copy()
         
         for col in df.columns:
             if col in self.NORMALIZATION_PARAMS:
                 params = self.NORMALIZATION_PARAMS[col]
-                min_val, max_val = params['min'], params['max']
-                df_norm[col] = (df[col] - min_val) / (max_val - min_val)
-                df_norm[col] = df_norm[col].clip(0, 1)
-            elif df[col].max() > 1 or df[col].min() < 0:
-                # Auto-normalize if not in params and out of 0-1 range
-                col_min, col_max = df[col].min(), df[col].max()
-                if col_max - col_min > 0:
-                    df_norm[col] = (df[col] - col_min) / (col_max - col_min)
+                
+                if params.get('type') == 'ratio':
+                    # Log-scaling: np.log1p(value) / np.log1p(max_log), clipped to [0,1]
+                    max_log = params['max_log']
+                    df_norm[col] = df[col].apply(
+                        lambda v, ml=max_log: self._normalize_ratio(v, ml)
+                    )
                 else:
-                    df_norm[col] = 0.5
+                    # Standard fixed min/max normalization
+                    min_val, max_val = params['min'], params['max']
+                    df_norm[col] = (df[col] - min_val) / (max_val - min_val)
+                    df_norm[col] = df_norm[col].clip(0, 1)
+            else:
+                # If feature not in params, clip to 0-1 (assume already normalized)
+                df_norm[col] = df[col].clip(0, 1)
         
         return df_norm
+    
+    @staticmethod
+    def _calculate_peak_hour(circadian: np.ndarray) -> float:
+        """
+        Calculate peak activity hour using weighted average for determinism.
+        Instead of argmax (which has ties), use center of mass of top 3 hours.
+        """
+        if len(circadian) == 0 or np.sum(circadian) == 0:
+            return 12.0  # Default to noon
+        
+        # Get indices of top 3 hours
+        top_indices = np.argsort(circadian)[-3:]
+        top_values = circadian[top_indices]
+        
+        # Weighted average (center of mass)
+        if np.sum(top_values) > 0:
+            weighted_hour = np.sum(top_indices * top_values) / np.sum(top_values)
+            return float(weighted_hour)
+        return 12.0
     
     @staticmethod
     def _calculate_entropy(distribution: np.ndarray) -> float:
@@ -209,6 +290,7 @@ class NetworkGraphProcessor:
     def compute_graph_features(edges: List[Tuple[str, str]], target_node: str) -> Dict[str, float]:
         """
         Compute graph features for a target node given edge list.
+        DETERMINISTIC: Uses fixed parameters and rounding for consistency.
         
         Args:
             edges: List of (source, target) tuples representing connections
@@ -231,24 +313,31 @@ class NetworkGraphProcessor:
         
         features = {}
         
-        # PageRank
+        # PageRank (DETERMINISTIC: fixed parameters)
         try:
-            pagerank = nx.pagerank(G, alpha=0.85)
-            features['computed_pagerank'] = pagerank.get(target_node, 0.0)
+            pagerank = nx.pagerank(
+                G, 
+                alpha=0.85,
+                max_iter=100,
+                tol=1.0e-6  # Fixed tolerance for convergence
+            )
+            # Round to 6 decimal places for consistency
+            features['computed_pagerank'] = round(pagerank.get(target_node, 0.0), 6)
         except:
             features['computed_pagerank'] = 0.0
         
         # Clustering coefficient (for undirected version)
         try:
             G_undirected = G.to_undirected()
-            features['computed_clustering'] = nx.clustering(G_undirected, target_node)
+            clustering = nx.clustering(G_undirected, target_node)
+            features['computed_clustering'] = round(clustering, 6)
         except:
             features['computed_clustering'] = 0.0
         
         # Degree centrality
         try:
             degree_cent = nx.degree_centrality(G)
-            features['computed_degree_centrality'] = degree_cent.get(target_node, 0.0)
+            features['computed_degree_centrality'] = round(degree_cent.get(target_node, 0.0), 6)
         except:
             features['computed_degree_centrality'] = 0.0
         
@@ -256,7 +345,7 @@ class NetworkGraphProcessor:
         try:
             if G.number_of_nodes() < 1000:
                 betweenness = nx.betweenness_centrality(G)
-                features['computed_betweenness'] = betweenness.get(target_node, 0.0)
+                features['computed_betweenness'] = round(betweenness.get(target_node, 0.0), 6)
             else:
                 features['computed_betweenness'] = 0.0
         except:
